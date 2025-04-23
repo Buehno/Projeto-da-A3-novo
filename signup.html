@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1366, height=768" />
+    <title>Cadastro - Save Money</title>
+    <style>
+        :root {
+            --primary: #003cff;
+            --accent: #003cff;
+            --light-bg: #f4f4f4;
+            --text: #2c2c2c;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text);
+            width: 1366px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .header {
+            background-color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            color: var(--white);
+            height: 80px;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(4, 0, 255, 0.1);
+        }
+
+        .logo {
+            width: 160px;
+            height: 200px;
+            object-fit: contain;
+            margin-left: 60px;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 0;
+            flex: 1;
+            margin-right: 210px;
+            font-size: 35px;
+        }
+
+        .container {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(204, 0, 255, 0.05);
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px; /* Adjust margin for spacing */
+        }
+
+        input {
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--accent);
+        }
+
+        p {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="Save.png" alt="Save Money Logo" class="logo" />
+        <h2>Cadastro</h2>
+    </div>
+
+    <div class="container">
+        <form id="signupForm">
+            <input type="text" id="username" placeholder="Nome de Usuário" required />
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="password" id="password" placeholder="Senha" required />
+            <button type="submit">Cadastrar</button>
+        </form>
+        <p>Já tem uma conta? <a href="login.html">Faça Login</a></p>
+    </div>
+</body>
+</html>
