@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1366, height=768" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <title>Login - Save Money</title>
     <style>
         :root {
@@ -98,6 +99,11 @@
     </div>
 
     <div class="container">
+        <div id="errorPopup" class="hidden fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-6 rounded-lg shadow-lg">
+            <p>Email ou senha incorretos! Tente novamente.</p>
+            <button onclick="closePopup()" class="bg-white text-red-500 px-4 py-2 rounded-md mt-4">Fechar</button>
+        </div>
+        
         <form id="loginForm" onsubmit="handleLogin(event)">
             <input type="email" id="email" placeholder="Email" required />
             <input type="password" id="password" placeholder="Senha" required />
@@ -107,12 +113,32 @@
     </div>
 
     <script>
-        function handleLogin(event) {
-            event.preventDefault(); // Previne o comportamento padrão de submissão do formulário
-            // Aqui você pode adicionar lógica para validar os dados (por exemplo, email e senha)
-            // E se for válido, redireciona para a página principal.
-            window.location.href = "principal.html"; // Redireciona para a página principal
+   function handleLogin(event) {
+        event.preventDefault();
+        
+        let email = document.getElementById('email').value;
+        let password = document.getElementById('password').value;
+        let errorPopup = document.getElementById('errorPopup');
+
+        if (email === "admin@admin" && password === "admin") {
+            let loginMessage = document.createElement('div');
+            loginMessage.id = "loginSuccess";
+            loginMessage.className = "bg-green-500 text-white text-center p-4 rounded-lg shadow-md max-w-sm mx-auto mt-6";
+            loginMessage.innerText = "Usuário logado com sucesso!";
+            document.body.appendChild(loginMessage);
+
+            setTimeout(() => {
+                window.location.href = "principal.html";
+            }, 3000);
+        } else {
+            errorPopup.classList.remove('hidden'); // Exibe o popup
         }
-    </script>
+    }
+
+    function closePopup() {
+        document.getElementById('errorPopup').classList.add('hidden');
+    }
+</script>
+
 </body>
 </html>
