@@ -70,7 +70,7 @@ function calcularBonus() {
 }
 
 function logout() {
-  window.location.href = "login.html";
+  window.location.href = "Index.html";
 }
 
 function downloadXLSX() {
