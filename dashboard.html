@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Save Money</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+  <!-- Navbar melhorado -->
+<header class="bg-blue-600 text-white flex justify-between items-center px-4 py-3 shadow-md">
+ <div class="flex items-center space-x-4">
+  <img src="static/Save.png" alt="Save Money Logo" class="w-40 h-auto max-h-20 object-contain"/>
+</div>
+
+
+  <!-- Menu desktop -->
+  <nav class="hidden md:flex space-x-6 font-semibold">
+    <a href="home.html" class="hover:underline">Pagina Inicial</a>
+    <a href="dashboard.html" class="hover:underline">Dashboard</a>
+    <a href="metas.html"hover:underline>Metas</a>
+    <a href="index.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition">Sair</a>
+  </nav>
+
+  <!-- Menu burger mobile -->
+  <div class="relative md:hidden">
+    <button id="menuButton" class="focus:outline-none">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+
+    <nav id="dropdownMenu" class="hidden absolute right-0 mt-2 w-100 bg-white text-gray-800 rounded-md shadow-md z-50">
+      <a href="home.html" class="hover:underline">home</a>
+      <a href="dashboard.html" class="hover:underline">Dashboard</a>
+      <a href="metas.html"hover:underline>Metas</a>
+      <a href="#" class="hover:underline">Configurar</a>
+      <a href="Index.html" class="hover:underline" onclick="logout()">Sair</a>
+      </nav>
+  </div>
+</header>
+  <main class="container mx-auto px-4 py-6 space-y-8 max-w-6xl">
+
+    <!-- Visão Geral -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-2xl font-bold mb-6 text-center sm:text-left">Visão Geral</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="bg-blue-100 text-blue-900 rounded-xl p-4 shadow-sm">
+          <div class="text-sm">Renda Líquida</div>
+          <div class="text-2xl font-mono font-bold" id="dashIncome">0.00</div>
+        </div>
+        <div class="bg-red-100 text-red-900 rounded-xl p-4 shadow-sm">
+          <div class="text-sm">Total de Gastos</div>
+          <div class="text-2xl font-mono font-bold" id="dashExpenses">0.00</div>
+        </div>
+        <div class="bg-green-100 text-green-900 rounded-xl p-4 shadow-sm">
+          <div class="text-sm">Saldo Atual</div>
+          <div class="text-2xl font-mono font-bold" id="dashBalance">0.00</div>
+        </div>
+        <div class="bg-yellow-100 text-yellow-900 rounded-xl p-4 shadow-sm">
+          <div class="text-sm">Valor Poupado</div>
+          <div class="text-2xl font-mono font-bold" id="dashSavings">0.00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sugestão de Gasto Diário -->
+    <section class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-5 rounded-lg shadow">
+      <h2 class="text-lg font-bold mb-1">Gasto Diário Sugerido</h2>
+      <p>Baseado no seu saldo, você pode gastar aproximadamente:</p>
+      <p class="text-3xl font-mono mt-3 font-semibold" id="dailyBudget">R$ 0.00</p>
+    </section>
+
+    <!-- Análise Complementar -->
+    <section class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-xl font-bold mb-2">Resumo de Consumo</h2>
+      <p id="advice" class="text-gray-600">Análise em andamento...</p>
+    </section>
+
+    <!-- Gráficos -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+        <h2 class="text-xl font-bold">Gastos por Prioridade</h2>
+        <button onclick="downloadChart('priorityChart')" class="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Salvar Gráfico</button>
+      </div>
+      <canvas id="priorityChart" class="w-full max-h-96"></canvas>
+    </section>
+
+    <section class="bg-white rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+        <h2 class="text-xl font-bold">Distribuição das Despesas</h2>
+        <button onclick="downloadChart('categoryChart')" class="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Salvar Gráfico</button>
+      </div>
+      <canvas id="categoryChart" class="w-full max-h-96"></canvas>
+    </section>
+
+    <section class="bg-white p-6 rounded-lg shadow">
+      <h2 class="text-xl font-bold mb-4">Despesas Mais Frequentes</h2>
+      <canvas id="frequentExpensesChart" class="w-full max-h-96"></canvas>
+    </section>
+
+  </main>
+
+  <script>
+    const income = parseFloat(localStorage.getItem('income')) || 0;
+    const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    const savePercent = localStorage.getItem('savePercent') === "true";
+
+    const totalExpense = expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+    const balance = income - totalExpense;
+    const savings = savePercent ? income * 0.1 : 0;
+
+    document.getElementById('dashIncome').textContent = income.toFixed(2);
+    document.getElementById('dashExpenses').textContent = totalExpense.toFixed(2);
+    document.getElementById('dashBalance').textContent = balance.toFixed(2);
+    document.getElementById('dashSavings').textContent = savings.toFixed(2);
+
+    function showDailySuggestedSpend(balance) {
+      const daily = balance / 30;
+      document.getElementById('dailyBudget').textContent = `R$ ${daily.toFixed(2)}`;
+    }
+
+    function provideAdvice(income, expensesTotal, savings) {
+      const advice = document.getElementById('advice');
+      if (savings > income * 0.15) {
+        advice.textContent = "Parabéns! Você está economizando mais de 15% da sua renda.";
+      } else if (expensesTotal > income) {
+        advice.textContent = "Atenção: seus gastos estão maiores do que sua renda.";
+      } else {
+        advice.textContent = "Seus gastos estão sob controle. Considere aumentar sua poupança.";
+      }
+    }
+
+    // Gráfico Gastos por Prioridade
+    const priorityMap = { Alta: 0, Média: 0, Baixa: 0 };
+    expenses.forEach(e => {
+      priorityMap[e.priority] = (priorityMap[e.priority] || 0) + parseFloat(e.amount);
+    });
+
+    new Chart(document.getElementById('priorityChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['Alta', 'Média', 'Baixa'],
+        datasets: [{
+          label: 'Gastos (R$)',
+          data: [priorityMap.Alta, priorityMap.Média, priorityMap.Baixa],
+          backgroundColor: ['#ef4444', '#facc15', '#10b981']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    // Gráfico Distribuição das Despesas
+    const categoryMap = {};
+    expenses.forEach(e => {
+      const key = e.source || 'Sem cartão';
+      categoryMap[key] = (categoryMap[key] || 0) + parseFloat(e.amount);
+    });
+
+    new Chart(document.getElementById('categoryChart').getContext('2d'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(categoryMap),
+        datasets: [{
+          data: Object.values(categoryMap),
+          backgroundColor: ['#60a5fa', '#f87171', '#fbbf24', '#34d399', '#a78bfa', '#f472b6']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+
+    // Gráfico Despesas Mais Frequentes
+    function renderFrequentExpensesChart(expenses) {
+      const nameCount = {};
+      expenses.forEach(exp => {
+        nameCount[exp.name] = (nameCount[exp.name] || 0) + 1;
+      });
+      const sortedNames = Object.entries(nameCount).sort((a, b) => b[1] - a[1]);
+      const labels = sortedNames.map(entry => entry[0]);
+      const values = sortedNames.map(entry => entry[1]);
+
+      new Chart(document.getElementById('frequentExpensesChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Frequência',
+            data: values,
+            backgroundColor: '#3B82F6'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Despesas Mais Frequentes'
+            }
+          }
+        }
+      });
+    }
+
+    function downloadChart(canvasId) {
+      const link = document.createElement('a');
+      link.download = `${canvasId}.png`;
+      link.href = document.getElementById(canvasId).toDataURL('image/png');
+      link.click();
+    }
+
+    showDailySuggestedSpend(balance);
+    provideAdvice(income, totalExpense, savings);
+    renderFrequentExpensesChart(expenses);
+
+    const menuButton = document.getElementById("menuButton");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+
+  menuButton.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("hidden");
+  });
+
+  // Fecha menu ao clicar fora (opcional, melhora UX)
+  document.addEventListener("click", (event) => {
+    if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+      dropdownMenu.classList.add("hidden");
+    }
+  });
+
+  // Função logout (exemplo)
+  function logout() {
+    // Redirecionar para a página inicial ou tela de login
+    window.location.href = "Index.html";
+  }
+  </script>
+
+</body>
+</html>

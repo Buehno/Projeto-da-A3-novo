@@ -2,86 +2,179 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Save Money - Controle Financeiro</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-
-
 </head>
-<body class="bg-gray-100 text-gray-800" style="width: 1366px; margin: auto;">
-  <script src="script.js"></script>
-  <div id="downloadPopup" class="hidden fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white p-6 rounded-lg shadow-lg">
-    <p>📁 Gerando planilha... Aguarde!</p>
-</div>
-<div id="errorPopup" class="hidden fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-500 text-white p-6 rounded-lg shadow-lg">
-  <p id="errorMessage">⚠️ Erro: Preencha os campos corretamente!</p>
-  <button onclick="closeErrorPopup()" class="bg-white text-red-500 px-4 py-2 rounded-md mt-4">Fechar</button>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+  <!-- Topbar com menu burger -->
+  <header class="bg-blue-600 text-white flex justify-between items-center px-4 py-3 shadow-md">
+ <div class="flex items-center space-x-4">
+  <img src="static/Save.png" alt="Save Money Logo" class="w-40 h-auto max-h-20 object-contain"/>
 </div>
 
- 
-  <div id="loginSuccess" class="hidden bg-green-500 text-white text-center p-4 rounded-lg shadow-md max-w-sm mx-auto mt-6">
-    Usuário logado com sucesso! Redirecionando...
+
+  <!-- Menu desktop -->
+  <nav class="hidden md:flex space-x-6 font-semibold">
+    <a href="home.html" class="hover:underline">Pagina Inicial</a>
+    <a href="dashboard.html" class="hover:underline">Dashboard</a>
+    <a href="metas.html"hover:underline>Metas</a>
+    <a href="index.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition">Sair</a>
+  </nav>
+
+  <!-- Menu burger mobile -->
+  <div class="relative md:hidden">
+    <button id="menuButton" class="focus:outline-none">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+
+    <nav id="dropdownMenu" class="hidden absolute right-0 mt-2 w-100 bg-white text-gray-800 rounded-md shadow-md z-50">
+      <a href="home.html" class="hover:underline">home</a>
+      <a href="dashboard.html" class="hover:underline">Dashboard</a>
+      <a href="metas.html"hover:underline>Metas</a>
+      <a href="#" class="hover:underline">Configurar</a>
+      <a href="Index.html" class="hover:underline" onclick="logout()">Sair</a>
+      </nav>
   </div>
-  
-  <div class="bg-blue-600 flex justify-between items-center p-4 text-white h-20 shadow-md">
-    <img src="static/Save.png" alt="Save Money Logo" class="w-40 h-auto object-contain" />
-    <div class="flex-grow text-center text-3xl font-semibold">Controle Financeiro</div>
+</header>
 
-    <div class="flex flex-row items-center space-x-4"> 
-        <button onclick="generatePDF()" class="bg-purple-600 text-white font-bold text-lg rounded-lg py-3 px-6 hover:bg-purple-700 transition duration-300 shadow-md">
-            📄 Baixar Heurísticas em PDF
-        </button>
+  <main class="container mx-auto p-4 space-y-10 max-w-4xl">
 
-        <button onclick="downloadXLSX()" class="bg-green-600 text-white rounded-lg py-3 px-5 hover:bg-green-700 transition duration-300 shadow-md">
-            📂 Baixar XLSX
-        </button>
+    <!-- Seção Carteira -->
+    <section id="carteira" class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-bold mb-4">Carteira</h2>
 
-        <button onclick="logout()" class="bg-red-600 text-white rounded-lg py-3 px-5 text-sm hover:bg-red-700 transition duration-300 shadow-md">
-            🔴 Logout
+      <!-- Renda Líquida -->
+      <div class="mb-6">
+        <h3 class="font-semibold mb-2">Configure sua Renda Líquida</h3>
+        <input type="number" step="0.01" id="income" placeholder="Digite sua renda"
+          class="border border-gray-300 rounded-lg p-2 w-full mb-2" />
+          <div class="mb-4">
+       
+        <button id="saveIncomeBtn" class="bg-blue-600 text-white w-full py-2 rounded-lg hover:bg-blue-700 transition">
+          Salvar Renda
         </button>
+        <div class="mb-4">
+        <label class="inline-flex items-center">
+          <input type="checkbox" id="savePercent" class="form-checkbox text-indigo-600" />
+          <span class="ml-2">Poupar 10% da renda?</span>
+        </label>
+      </div>
+
+      </div>
+
+      <!-- Saldos -->
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="bg-green-100 text-green-800 flex-1 rounded-lg p-4 text-center">
+          <div class="text-lg font-bold">Saldo Atual</div>
+          <div class="text-2xl font-mono" id="remainingBalance">0.00</div>
+        </div>
+        <div class="bg-red-100 text-red-800 flex-1 rounded-lg p-4 text-center">
+          <div class="text-lg font-bold">Total de Gastos</div>
+          <div class="text-2xl font-mono" id="totalExpense">0.00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção Investimentos -->
+    <section id="investimentos" class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-bold mb-4">Investimentos</h2>
+      <p class="text-sm text-gray-600 mb-2">Funcionalidade em construção. Em breve você poderá cadastrar seus investimentos com base no CDI.</p>
+    </section>
+
+    <!-- Seção Cartões -->
+    <section id="cartoes" class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-bold mb-4">Cartões de Crédito</h2>
+      <div id="cardsContainer" class="flex flex-wrap gap-4 mb-4"></div>
+      <form id="addCardForm" class="grid grid-cols-1 md:grid-cols-4 gap-2 items-center">
+        <input type="text" id="cardName" placeholder="Nome do cartão" required class="border border-gray-300 rounded-lg p-2"/>
+        <input type="number" step="0.01" id="cardLimit" placeholder="Limite (R$)" required class="border border-gray-300 rounded-lg p-2"/>
+        <input type="color" id="cardColor" value="#2563eb" class="w-full h-12 p-0 border-0 rounded-lg"/>
+        <button type="submit" class="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition">
+          Adicionar Cartão
+        </button>
+      </form>
+    </section>
+
+    <!-- Seção Despesas -->
+    <section id="despesas" class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-bold mb-4">Despesas</h2>
+      <form id="expenseForm" class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
+        <input type="text" id="name" placeholder="Nome do gasto" required class="border border-gray-300 rounded-lg p-2"/>
+        <input type="number" step="0.01" id="amount" placeholder="Valor" required class="border border-gray-300 rounded-lg p-2"/>
+        <select id="priority" required class="border border-gray-300 rounded-lg p-2">
+          <option value="Alta">Alta</option>
+          <option value="Média">Média</option>
+          <option value="Baixa">Baixa</option>
+        </select>
+        <select id="cardSelect" class="border border-gray-300 rounded-lg p-2">
+          <option value="">Sem cartão</option>
+        </select>
+        <button type="submit" class="bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700 transition">
+          Adicionar
+        </button>
+      </form>
+
+      <!-- Tabela de despesas -->
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr>
+              <th class="bg-blue-600 text-white p-3 text-left">Nome</th>
+              <th class="bg-blue-600 text-white p-3 text-left">Valor</th>
+              <th class="bg-blue-600 text-white p-3 text-left">Prioridade</th>
+              <th class="bg-blue-600 text-white p-3 text-left">Fonte</th>
+              <th class="bg-blue-600 text-white p-3 text-left">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="expenseTable">
+            <!-- JS irá preencher -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Botão de exportação -->
+    <div class="text-center">
+      <button id="exportBtn" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+        Exportar para Excel
+      </button>
     </div>
-</div>
 
+  </main>
 
+  <!-- Script externo -->
+  <script src="script.js"></script>
 
-  <div class="bg-white mx-auto mt-10 p-6 rounded-lg shadow-md max-w-2xl">
-    <label class="block font-medium">Renda Líquida: R$</label>
-    <input type="number" step="0.01" id="income" placeholder="Digite sua renda" oninput="updateBalance()" class="border-gray-300 rounded-lg p-2 w-full mt-2 mb-4" />
+  <!-- Menu dropdown toggle -->
+<script>
+  const menuButton = document.getElementById("menuButton");
+  const dropdownMenu = document.getElementById("dropdownMenu");
 
-    <h3 class="text-xl mt-6">Adicione Gastos</h3>
-    <form id="expenseForm" class="mt-4">
-      <input type="text" id="name" placeholder="Nomegasto" required class="border-gray-300 rounded-lg p-2 w-full mb-4" />
-      <input type="number" step="0.01" id="amount" placeholder="Valor" required class="border-gray-300 rounded-lg p-2 w-full mb-4" />
-      <select id="priority" required class="border-gray-300 rounded-lg p-2 w-full mb-4">
-        <option value="Alta">Alta</option>
-        <option value="Média">Média</option>
-        <option value="Baixa">Baixa</option>
-      </select>
-      <button type="submit" class="bg-blue-600 text-white rounded-lg py-2 w-full hover:bg-blue-700 transition duration-300">Adicionar</button>
-    </form>
+  menuButton.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("hidden");
+  });
 
-    <h3 class="text-xl mt-6">Gastos</h3>
-    <table class="w-full mt-4 border-collapse">
-      <thead>
-        <tr>
-          <th class="bg-blue-600 text-white p-3 text-left">Nome</th>
-          <th class="bg-blue-600 text-white p-3 text-left">Valor</th>
-          <th class="bg-blue-600 text-white p-3 text-left">Prioridade</th>
-          <th class="bg-blue-600 text-white p-3 text-left">Ação</th>
-        </tr>
-      </thead>
-      <tbody id="expenseTable">
-        <!-- Gastos serão adicionados aqui -->
-      </tbody>
-    </table>
+  // Fecha menu ao clicar fora (opcional, melhora UX)
+  document.addEventListener("click", (event) => {
+    if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+      dropdownMenu.classList.add("hidden");
+    }
+  });
 
-    <h3 class="text-xl mt-6">Total de Gastos: R$ <span id="totalExpense">0.00</span></h3>
-    <h3 class="text-xl">Saldo Restante: R$ <span id="remainingBalance">0.00</span></h3>
-  </div>
- 
-  
+  // Função logout (exemplo)
+  function logout() {
+    // Redirecionar para a página inicial ou tela de login
+    window.location.href = "Index.html";
+  }
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>

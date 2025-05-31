@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Metas - Save Money</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+  <!-- Header -->
+   <header class="bg-blue-600 text-white flex justify-between items-center px-4 py-3 shadow-md">
+ <div class="flex items-center space-x-4">
+  <img src="static/Save.png" alt="Save Money Logo" class="w-40 h-auto max-h-20 object-contain"/>
+</div>
+
+
+  <!-- Menu desktop -->
+  <nav class="hidden md:flex space-x-6 font-semibold">
+    <a href="home.html" class="hover:underline">Pagina Inicial</a>
+    <a href="dashboard.html" class="hover:underline">Dashboard</a>
+    <a href="metas.html"hover:underline>Metas</a>
+    <a href="index.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition">Sair</a>
+  </nav>
+
+  <!-- Menu burger mobile -->
+  <div class="relative md:hidden">
+    <button id="menuButton" class="focus:outline-none">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+
+    <nav id="dropdownMenu" class="hidden absolute right-0 mt-2 w-100 bg-white text-gray-800 rounded-md shadow-md z-50">
+      <a href="home.html" class="hover:underline">home</a>
+      <a href="dashboard.html" class="hover:underline">Dashboard</a>
+      <a href="metas.html"hover:underline>Metas</a>
+      <a href="#" class="hover:underline">Configurar</a>
+      <a href="Index.html" class="hover:underline" onclick="logout()">Sair</a>
+      </nav>
+  </div>
+</header>
+  <!-- Conteúdo principal -->
+  <main class="container mx-auto px-4 py-6 max-w-5xl space-y-8">
+
+    <!-- Resumo financeiro -->
+    <section id="resumoFinanceiro" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-red-100 p-4 rounded shadow">
+        <h3 class="font-semibold"> Função em Beta 1.0, pode apresentar algumas falhas</h3>
+       
+      </div>
+
+    </section>
+
+    <!-- Formulário de configuração financeira -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-2xl font-bold mb-4">Configuração Financeira</h2>
+      <form id="financeForm" class="space-y-4">
+        <div>
+          <label for="monthlyContribution" class="block font-semibold mb-1">Valor a reservar mensalmente (R$)</label>
+          <input type="number" id="monthlyContribution" class="w-full border border-gray-300 rounded px-3 py-2" min="0" step="0.01" required autofocus />
+        </div>
+        <div>
+          <label for="bankName" class="block font-semibold mb-1">Banco</label>
+          <input type="text" id="bankName" class="w-full border border-gray-300 rounded px-3 py-2" required />
+        </div>
+        <div>
+          <label for="cdiRate" class="block font-semibold mb-1">Taxa CDI anual (%)</label>
+          <input type="number" id="cdiRate" class="w-full border border-gray-300 rounded px-3 py-2" min="0" step="0.01" required />
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Salvar Dados</button>
+      </form>
+    </section>
+
+    <!-- Formulário de metas -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-2xl font-bold mb-4">Cadastrar Meta</h2>
+      <form id="goalForm" class="space-y-4">
+        <div>
+          <label for="goalName" class="block font-semibold mb-1">Nome da Meta</label>
+          <input type="text" id="goalName" class="w-full border border-gray-300 rounded px-3 py-2" required />
+        </div>
+        <div>
+          <label for="goalValue" class="block font-semibold mb-1">Valor da Meta (R$)</label>
+          <input type="number" id="goalValue" class="w-full border border-gray-300 rounded px-3 py-2" min="0" step="0.01" required />
+        </div>
+        <div>
+          <label for="currentSaved" class="block font-semibold mb-1">Valor já guardado (R$)</label>
+          <input type="number" id="currentSaved" class="w-full border border-gray-300 rounded px-3 py-2" min="0" step="0.01" required />
+        </div>
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Criar Meta</button>
+      </form>
+    </section>
+
+    <!-- Cards de metas -->
+    <section id="goalCards" class="grid grid-cols-1 md:grid-cols-2 gap-6"></section>
+
+  </main>
+
+  <!-- Script -->
+  <script>
+    const goalForm = document.getElementById("goalForm");
+    const financeForm = document.getElementById("financeForm");
+    const goalCards = document.getElementById("goalCards");
+
+    function loadGoals() {
+      const goals = JSON.parse(localStorage.getItem("goals")) || [];
+      goalCards.innerHTML = "";
+      goals.forEach((goal, index) => renderGoalCard(goal, index));
+    }
+
+    function renderGoalCard(goal, index) {
+      const progress = Math.min((goal.currentSaved / goal.goalValue) * 100, 100);
+      const status = progress >= 100 ? "Meta Alcançada" : progress >= 75 ? "Quase lá" : "Em progresso";
+
+      const card = document.createElement("div");
+      card.className = "bg-white rounded-lg shadow p-4 space-y-2";
+      card.innerHTML = `
+        <h3 class="text-lg font-bold">${goal.goalName}</h3>
+        <p><strong>Meta:</strong> R$ ${goal.goalValue.toFixed(2)}</p>
+        <p><strong>Guardado:</strong> R$ ${goal.currentSaved.toFixed(2)}</p>
+        <p><strong>Status:</strong> ${status}</p>
+        <div class="w-full bg-gray-200 h-4 rounded-full">
+          <div class="bg-blue-600 h-4 rounded-full" style="width: ${progress}%"></div>
+        </div>
+        <div class="flex space-x-2">
+          <button onclick="concluirMeta(${index})" class="bg-blue-500 text-white px-3 py-1 rounded">Concluir</button>
+          <button onclick="removerMeta(${index})" class="bg-red-500 text-white px-3 py-1 rounded">Remover</button>
+        </div>
+      `;
+      goalCards.appendChild(card);
+
+      if (progress >= 100 && !goal.completed) {
+        alert(`Meta alcançada: ${goal.goalName}! Deseja marcar como concluída?`);
+      }
+    }
+
+    function concluirMeta(index) {
+      const goals = JSON.parse(localStorage.getItem("goals")) || [];
+      goals[index].completed = true;
+      localStorage.setItem("goals", JSON.stringify(goals));
+      loadGoals();
+    }
+
+    function removerMeta(index) {
+      const goals = JSON.parse(localStorage.getItem("goals")) || [];
+      goals.splice(index, 1);
+      localStorage.setItem("goals", JSON.stringify(goals));
+      loadGoals();
+    }
+
+    goalForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const goalName = document.getElementById("goalName").value;
+      const goalValue = parseFloat(document.getElementById("goalValue").value);
+      const currentSaved = parseFloat(document.getElementById("currentSaved").value);
+
+      if (isNaN(goalValue) || isNaN(currentSaved) || goalValue <= 0) {
+        alert("Insira valores válidos para a meta.");
+        return;
+      }
+
+      const newGoal = { goalName, goalValue, currentSaved, completed: false };
+      const goals = JSON.parse(localStorage.getItem("goals")) || [];
+      goals.push(newGoal);
+      localStorage.setItem("goals", JSON.stringify(goals));
+
+      goalForm.reset();
+      loadGoals();
+    });
+
+    financeForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const monthlyContribution = parseFloat(document.getElementById("monthlyContribution").value);
+      const bankName = document.getElementById("bankName").value;
+      const cdiRate = parseFloat(document.getElementById("cdiRate").value);
+
+      if (isNaN(monthlyContribution) || isNaN(cdiRate)) {
+        alert("Preencha corretamente os valores financeiros.");
+        return;
+      }
+
+      const financeData = { monthlyContribution, bankName, cdiRate };
+      localStorage.setItem("financeData", JSON.stringify(financeData));
+      alert("Dados financeiros salvos.");
+    });
+
+    loadGoals();
+    const menuButton = document.getElementById("menuButton");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+
+  menuButton.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("hidden");
+  });
+
+  // Fecha menu ao clicar fora (opcional, melhora UX)
+  document.addEventListener("click", (event) => {
+    if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+      dropdownMenu.classList.add("hidden");
+    }
+  });
+
+  // Função logout (exemplo)
+  function logout() {
+    // Redirecionar para a página inicial ou tela de login
+    window.location.href = "Index.html";
+  }
+  </script>
+
+</body>
+</html>
