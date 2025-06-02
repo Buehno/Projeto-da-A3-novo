@@ -25,21 +25,23 @@
   </nav>
 
   <!-- Menu burger mobile -->
-  <div class="relative md:hidden">
-    <button id="menuButton" class="focus:outline-none">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M4 6h16M4 12h16M4 18h16"/>
-      </svg>
-    </button>
+<div class="relative md:hidden">
+  <button id="menuButton" class="focus:outline-none p-2 rounded-md hover:bg-gray-700">
+  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+      d="M4 6h16M4 12h16M4 18h16"/>
+  </svg>
+</button>
 
-    <nav id="dropdownMenu" class="hidden absolute right-0 mt-2 w-100 bg-white text-gray-800 rounded-md shadow-md z-50">
-      <a href="home.html" class="hover:underline">home</a>
-      <a href="dashboard.html" class="hover:underline">Dashboard</a>
-      <a href="metas.html"hover:underline>Metas</a>
-      <a href="Index.html" class="hover:underline" onclick="logout()">Sair</a>
-      </nav>
-  </div>
+
+  <nav id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-lg z-50">
+    <a href="home.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Home</a>
+    <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+    <a href="metas.html" class="block px-4 py-2 hover:bg-gray-100">Metas</a>
+    <a href="Index.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md" onclick="logout()">Sair</a>
+  </nav>
+</div>
+
 </header>
   <main class="container mx-auto px-4 py-6 space-y-8 max-w-6xl">
 
