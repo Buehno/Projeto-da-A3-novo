@@ -9,51 +9,49 @@
 <body class="bg-gray-100 text-gray-800 min-h-screen">
 
   <!-- Header -->
-   <header class="bg-blue-600 text-white flex justify-between items-center px-4 py-3 shadow-md">
- <div class="flex items-center space-x-4">
-  <img src="static/Save.png" alt="Save Money Logo" class="w-40 h-auto max-h-20 object-contain"/>
-</div>
+  <header class="bg-blue-600 text-white flex justify-between items-center px-4 py-3 shadow-md">
+    <div class="flex items-center space-x-4">
+      <img src="static/Save.png" alt="Save Money Logo" class="w-40 h-auto max-h-20 object-contain" />
+    </div>
 
+    <!-- Menu desktop -->
+    <nav class="hidden md:flex space-x-6 font-semibold">
+      <a href="home.html" class="hover:underline">Página Inicial</a>
+      <a href="dashboard.html" class="hover:underline">Dashboard</a>
+      <a href="metas.html" class="hover:underline">Metas</a>
+      <a href="index.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition">Sair</a>
+    </nav>
 
-  <!-- Menu desktop -->
-  <nav class="hidden md:flex space-x-6 font-semibold">
-    <a href="home.html" class="hover:underline">Pagina Inicial</a>
-    <a href="dashboard.html" class="hover:underline">Dashboard</a>
-    <a href="metas.html"hover:underline>Metas</a>
-    <a href="index.html" class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 transition">Sair</a>
-  </nav>
+    <!-- Menu mobile -->
+    <div class="relative md:hidden">
+      <button id="menuButton" aria-label="Abrir menu" class="focus:outline-none p-2 rounded-md hover:bg-blue-700">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <nav id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-lg z-50">
+        <a href="home.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Página Inicial</a>
+        <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+        <a href="metas.html" class="block px-4 py-2 hover:bg-gray-100">Metas</a>
+        <a href="index.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md" onclick="logout()">Sair</a>
+      </nav>
+    </div>
+  </header>
 
-  <!-- Menu burger mobile -->
-<div class="relative md:hidden">
-  <button id="menuButton" class="focus:outline-none p-2 rounded-md hover:bg-gray-700">
-  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-      d="M4 6h16M4 12h16M4 18h16"/>
-  </svg>
-</button>
-
-
-  <nav id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-md shadow-lg z-50">
-    <a href="home.html" class="block px-4 py-2 hover:bg-gray-100 rounded-t-md">Home</a>
-    <a href="dashboard.html" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
-    <a href="metas.html" class="block px-4 py-2 hover:bg-gray-100">Metas</a>
-    <a href="Index.html" class="block px-4 py-2 hover:bg-gray-100 rounded-b-md" onclick="logout()">Sair</a>
-  </nav>
-</div>
-</header>
   <!-- Conteúdo principal -->
   <main class="container mx-auto px-4 py-6 max-w-5xl space-y-8">
-
-    <!-- Resumo financeiro -->
-    <section id="resumoFinanceiro" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-red-100 p-4 rounded shadow">
-        <h3 class="font-semibold"> Função em Beta 1.0, pode apresentar algumas falhas</h3>
-       
-      </div>
-
+    <section class="bg-yellow-100 p-4 rounded shadow text-yellow-800">
+      <strong>Nota:</strong> Esta função está em versão Beta 1.0 e pode apresentar instabilidades.
     </section>
 
-    <!-- Formulário de configuração financeira -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-2xl font-bold mb-4">Resumo Geral</h2>
+      <p><strong>Metas criadas:</strong> <span id="totalGoals">0</span></p>
+      <p><strong>Valor total guardado:</strong> R$ <span id="totalSaved">0.00</span></p>
+      <p><strong>Valor total necessário:</strong> R$ <span id="totalRequired">0.00</span></p>
+      <button onclick="exportarMetas()" class="mt-2 bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 transition">Exportar Metas</button>
+    </section>
+
     <section class="bg-white rounded-lg shadow p-6">
       <h2 class="text-2xl font-bold mb-4">Configuração Financeira</h2>
       <form id="financeForm" class="space-y-4">
@@ -69,14 +67,13 @@
           <label for="cdiRate" class="block font-semibold mb-1">Taxa CDI anual (%)</label>
           <input type="number" id="cdiRate" class="w-full border border-gray-300 rounded px-3 py-2" min="0" step="0.01" required />
         </div>
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Salvar Dados</button>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Salvar Dados</button>
       </form>
     </section>
 
-    <!-- Formulário de metas -->
     <section class="bg-white rounded-lg shadow p-6">
       <h2 class="text-2xl font-bold mb-4">Cadastrar Meta</h2>
-      <form id="goalForm" class="space-y-4">
+      <form id="goalForm" class="space-y-4" onkeydown="return event.key != 'Enter';">
         <div>
           <label for="goalName" class="block font-semibold mb-1">Nome da Meta</label>
           <input type="text" id="goalName" class="w-full border border-gray-300 rounded px-3 py-2" required />
@@ -89,30 +86,44 @@
           <label for="currentSaved" class="block font-semibold mb-1">Valor já guardado (R$)</label>
           <input type="number" id="currentSaved" class="w-full border border-gray-300 rounded px-3 py-2" min="0" step="0.01" required />
         </div>
-        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Criar Meta</button>
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Criar Meta</button>
       </form>
     </section>
 
-    <!-- Cards de metas -->
     <section id="goalCards" class="grid grid-cols-1 md:grid-cols-2 gap-6"></section>
-
   </main>
 
-  <!-- Script -->
   <script>
     const goalForm = document.getElementById("goalForm");
     const financeForm = document.getElementById("financeForm");
     const goalCards = document.getElementById("goalCards");
 
+    function calcularMesesRestantes(goal, monthlyContribution) {
+      const restante = goal.goalValue - goal.currentSaved;
+      return monthlyContribution > 0 ? Math.ceil(restante / monthlyContribution) : "N/A";
+    }
+
+    function showMessage(message, type = 'success') {
+      const color = type === 'error' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+      const container = document.createElement("div");
+      container.className = `${color} p-3 rounded my-2`;
+      container.innerText = message;
+      document.querySelector("main").prepend(container);
+      setTimeout(() => container.remove(), 4000);
+    }
+
     function loadGoals() {
       const goals = JSON.parse(localStorage.getItem("goals")) || [];
       goalCards.innerHTML = "";
-      goals.forEach((goal, index) => renderGoalCard(goal, index));
+      const financeData = JSON.parse(localStorage.getItem("financeData")) || { monthlyContribution: 0 };
+      goals.forEach((goal, index) => renderGoalCard(goal, index, financeData));
+      atualizarResumo(goals);
     }
 
-    function renderGoalCard(goal, index) {
+    function renderGoalCard(goal, index, financeData) {
       const progress = Math.min((goal.currentSaved / goal.goalValue) * 100, 100);
-      const status = progress >= 100 ? "Meta Alcançada" : progress >= 75 ? "Quase lá" : "Em progresso";
+      const status = progress >= 100 ? "Meta Alcançada" : progress >= 75 ? "Quase lá" : "Em Progresso";
+      const mesesRestantes = calcularMesesRestantes(goal, financeData.monthlyContribution);
 
       const card = document.createElement("div");
       card.className = "bg-white rounded-lg shadow p-4 space-y-2";
@@ -121,19 +132,21 @@
         <p><strong>Meta:</strong> R$ ${goal.goalValue.toFixed(2)}</p>
         <p><strong>Guardado:</strong> R$ ${goal.currentSaved.toFixed(2)}</p>
         <p><strong>Status:</strong> ${status}</p>
+        <p><strong>Tempo estimado:</strong> ${mesesRestantes} mês(es)</p>
         <div class="w-full bg-gray-200 h-4 rounded-full">
-          <div class="bg-blue-600 h-4 rounded-full" style="width: ${progress}%"></div>
+          <div class="bg-blue-600 h-4 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
         </div>
-        <div class="flex space-x-2">
-          <button onclick="concluirMeta(${index})" class="bg-blue-500 text-white px-3 py-1 rounded">Concluir</button>
-          <button onclick="removerMeta(${index})" class="bg-red-500 text-white px-3 py-1 rounded">Remover</button>
-        </div>
-      `;
+        <div class="flex space-x-2 mt-2">
+          <button onclick="concluirMeta(${index})" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Concluir</button>
+          <button onclick="removerMeta(${index})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Remover</button>
+        </div>`;
       goalCards.appendChild(card);
+    }
 
-      if (progress >= 100 && !goal.completed) {
-        alert(`Meta alcançada: ${goal.goalName}! Deseja marcar como concluída?`);
-      }
+    function atualizarResumo(goals) {
+      document.getElementById("totalGoals").innerText = goals.length;
+      document.getElementById("totalSaved").innerText = goals.reduce((acc, g) => acc + g.currentSaved, 0).toFixed(2);
+      document.getElementById("totalRequired").innerText = goals.reduce((acc, g) => acc + g.goalValue, 0).toFixed(2);
     }
 
     function concluirMeta(index) {
@@ -150,22 +163,30 @@
       loadGoals();
     }
 
+    function exportarMetas() {
+      const goals = localStorage.getItem("goals");
+      const blob = new Blob([goals], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "metas_save_money.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     goalForm.addEventListener("submit", (e) => {
       e.preventDefault();
       const goalName = document.getElementById("goalName").value;
       const goalValue = parseFloat(document.getElementById("goalValue").value);
       const currentSaved = parseFloat(document.getElementById("currentSaved").value);
-
       if (isNaN(goalValue) || isNaN(currentSaved) || goalValue <= 0) {
-        alert("Insira valores válidos para a meta.");
+        showMessage("Insira valores válidos para a meta.", "error");
         return;
       }
-
       const newGoal = { goalName, goalValue, currentSaved, completed: false };
       const goals = JSON.parse(localStorage.getItem("goals")) || [];
       goals.push(newGoal);
       localStorage.setItem("goals", JSON.stringify(goals));
-
       goalForm.reset();
       loadGoals();
     });
@@ -175,37 +196,37 @@
       const monthlyContribution = parseFloat(document.getElementById("monthlyContribution").value);
       const bankName = document.getElementById("bankName").value;
       const cdiRate = parseFloat(document.getElementById("cdiRate").value);
-
       if (isNaN(monthlyContribution) || isNaN(cdiRate)) {
-        alert("Preencha corretamente os valores financeiros.");
+        showMessage("Preencha corretamente os valores financeiros.", "error");
         return;
       }
-
       const financeData = { monthlyContribution, bankName, cdiRate };
       localStorage.setItem("financeData", JSON.stringify(financeData));
-      alert("Dados financeiros salvos.");
+      showMessage("Dados financeiros salvos.");
     });
 
-    loadGoals();
-    const menuButton = document.getElementById("menuButton");
-  const dropdownMenu = document.getElementById("dropdownMenu");
-
-  menuButton.addEventListener("click", () => {
-    dropdownMenu.classList.toggle("hidden");
-  });
-
-  // Fecha menu ao clicar fora (opcional, melhora UX)
-  document.addEventListener("click", (event) => {
-    if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-      dropdownMenu.classList.add("hidden");
+    function logout() {
+      window.location.href = "index.html";
     }
-  });
 
-  // Função logout (exemplo)
-  function logout() {
-    // Redirecionar para a página inicial ou tela de login
-    window.location.href = "Index.html";
-  }
+    const menuButton = document.getElementById("menuButton");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    menuButton.addEventListener("click", () => dropdownMenu.classList.toggle("hidden"));
+    document.addEventListener("click", (event) => {
+      if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+        dropdownMenu.classList.add("hidden");
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const data = JSON.parse(localStorage.getItem("financeData"));
+      if (data) {
+        document.getElementById("monthlyContribution").value = data.monthlyContribution || '';
+        document.getElementById("bankName").value = data.bankName || '';
+        document.getElementById("cdiRate").value = data.cdiRate || '';
+      }
+      loadGoals();
+    });
   </script>
 
 </body>
