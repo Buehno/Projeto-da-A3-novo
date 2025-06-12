@@ -59,7 +59,7 @@
             box-shadow: 0 4px 12px rgba(204, 0, 255, 0.05);
             width: 90%;
             max-width: 400px;
-            margin-top: 20px; /* Adjust margin for spacing */
+            margin-top: 20px;
         }
 
         input {
@@ -89,6 +89,27 @@
         p {
             text-align: center;
         }
+
+        .popup {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+        }
+
+        .success {
+            background-color: green;
+        }
+
+        .error {
+            background-color: red;
+        }
     </style>
 </head>
 <body>
@@ -104,7 +125,49 @@
             <input type="password" id="password" placeholder="Senha" required />
             <button type="submit">Cadastrar</button>
         </form>
-        <p>Já tem uma conta? <a href="login.html">Faça Login</a></p>
+        <p>Já tem uma conta? <a href="Index.html">Faça Login</a></p>
     </div>
+
+    <div id="popup" class="popup"></div>
+
+    <script>
+        const form = document.getElementById("signupForm");
+        const popup = document.getElementById("popup");
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            let users = JSON.parse(localStorage.getItem("saveMoneyUsers")) || [];
+
+            const emailExists = users.some(user => user.email === email);
+
+            if (emailExists) {
+                showPopup("Este e-mail já está cadastrado!", false);
+                return;
+            }
+
+            users.push({ username, email, password });
+            localStorage.setItem("saveMoneyUsers", JSON.stringify(users));
+
+            showPopup("Cadastro realizado com sucesso!", true);
+
+            setTimeout(() => {
+                window.location.href = "Index.html"; // Redireciona para login após 2s
+            }, 2000);
+        });
+
+        function showPopup(message, success = true) {
+            popup.textContent = message;
+            popup.className = `popup ${success ? "success" : "error"}`;
+            popup.style.display = "block";
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

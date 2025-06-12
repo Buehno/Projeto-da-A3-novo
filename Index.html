@@ -82,36 +82,50 @@
 
   <!-- Mensagem de Sucesso -->
   <div id="successPopup" class="hidden fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-md z-50">
-    Login realizado com sucesso!
+    Ação realizada com sucesso!
   </div>
 
   <script>
     function handleLogin(event) {
       event.preventDefault();
-      const email = document.getElementById('email').value;
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
 
-      if (email === "admin@admin" && password === "admin") {
-        showPopup("successPopup");
+      const users = JSON.parse(localStorage.getItem('saveMoneyUsers')) || [];
+
+      const foundUser = users.find(user => user.email === email && user.password === password);
+
+      if (foundUser) {
+        showPopup("successPopup", "Login realizado com sucesso!");
         setTimeout(() => window.location.href = "home.html", 2000);
       } else {
-        showPopup("errorPopup");
+        showPopup("errorPopup", "Email ou senha incorretos!");
       }
     }
 
     function handleRegister(event) {
       event.preventDefault();
-      const name = document.getElementById('registerName').value;
-      const email = document.getElementById('registerEmail').value;
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
       const password = document.getElementById('registerPassword').value;
 
-      console.log("Usuário cadastrado:", { name, email });
-      showPopup("successPopup");
+      const users = JSON.parse(localStorage.getItem('saveMoneyUsers')) || [];
+
+      if (users.some(user => user.email === email)) {
+        showPopup("errorPopup", "Email já cadastrado!");
+        return;
+      }
+
+      users.push({ name, email, password });
+      localStorage.setItem('saveMoneyUsers', JSON.stringify(users));
+
+      showPopup("successPopup", "Cadastro realizado com sucesso!");
       switchToLogin();
     }
 
-    function showPopup(id) {
+    function showPopup(id, message) {
       const popup = document.getElementById(id);
+      popup.textContent = message;
       popup.classList.remove("hidden");
       setTimeout(() => popup.classList.add("hidden"), 3000);
     }
